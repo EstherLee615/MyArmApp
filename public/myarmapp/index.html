@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智慧頌缽療癒機器人</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="phone-container">
+        <!-- Dynamic Island 頂部條 -->
+        <div class="island">
+            <div class="island-content">
+                <span>智慧頌缽系統</span>
+                <button type="button" class="island-badge" id="esp32-connect-btn">連接 ESP32</button>
+            </div>
+        </div>
+
+        <!-- 1. 主頁面：情緒選擇與雙軸象限 -->
+        <div id="page-main" class="page active">
+            <div class="section-title">今日情緒定位</div>
+            
+            <div class="mood-grid">
+                <div class="mood-item active" data-mood="平靜">平靜</div>
+                <div class="mood-item" data-mood="快樂">快樂</div>
+                <div class="mood-item" data-mood="焦慮">焦慮</div>
+                <div class="mood-item" data-mood="悲傷">悲傷</div>
+                <div class="mood-item" data-mood="憤怒">憤怒</div>
+                <div class="mood-item" data-mood="疲憊">疲憊</div>
+            </div>
+
+            <div class="card">
+                <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-muted);">情緒雙軸座標定位</div>
+                <div id="emotion-canvas">
+                    <div class="axis-x"></div>
+                    <div class="axis-y"></div>
+                    <div id="pointer"></div>
+                    <span class="quad-label" style="top: 8px; right: 8px;">高喚醒 / 正向</span>
+                    <span class="quad-label" style="top: 8px; left: 8px;">高喚醒 / 負向</span>
+                    <span class="quad-label" style="bottom: 8px; left: 8px;">低喚醒 / 負向</span>
+                    <span class="quad-label" style="bottom: 8px; right: 8px;">低喚醒 / 正向</span>
+                </div>
+                <button type="button" class="btn-clear-emotion" id="btn-clear-pointer">重置定位點</button>
+            </div>
+
+            <div class="btn-main" id="btn-open-robot-modal">啟動頌缽療程</div>
+        </div>
+
+        <!-- 2. 生理狀態頁面 -->
+        <div id="page-bio" class="page">
+            <div class="section-title">生理數據監測</div>
+            
+            <div class="card bio-main">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">即時心率 (BPM)</span>
+                    <div class="status-tag"><div class="dot-pulse"></div>量測中</div>
+                </div>
+                <div class="main-val" id="bio-heart-rate">72 <small>BPM</small></div>
+                <div class="wave-container"><div class="wave-anim"></div></div>
+            </div>
+
+            <div class="card">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">心率變異度 (HRV) / 呼吸穩定度</div>
+                <div class="progress-circle">
+                    <span class="circle-val" id="bio-respiration">92%</span>
+                </div>
+            </div>
+
+            <!-- 本週情緒折線圖 -->
+            <div class="trend-chart-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                    <div class="trend-chart-title">本週情緒趨勢</div>
+                    <span id="emotion-week-range-label" style="font-size: 10px; color: var(--purple); font-weight: 700;"></span>
+                </div>
+
+                <div class="emotion-week-graph-container">
+                    <svg class="emotion-week-svg" id="emotion-week-chart" viewBox="0 0 340 152" role="img" aria-label="本週每日情緒折線圖"></svg>
+                </div>
+                <div class="emotion-week-labels" id="emotion-week-labels"></div>
+                <div class="emotion-legend" id="emotion-legend" aria-label="情緒顏色圖例"></div>
+            </div>
+        </div>
+
+        <!-- 3. 情緒日記頁面 -->
+        <div id="page-diary" class="page">
+            <div class="section-title">情緒日記與歷史</div>
+
+            <div class="card calendar-card">
+                <div class="calendar-nav">
+                    <button type="button" class="calendar-arrow" id="btn-prev-week" aria-label="上一週">&lt;</button>
+                    <div class="calendar-week-label" id="current-week-display">2026/09/27 - 2026/10/03</div>
+                    <button type="button" class="calendar-arrow" id="btn-next-week" aria-label="下一週">&gt;</button>
+                </div>
+                
+                <div class="calendar-days-header">
+                    <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+                </div>
+
+                <div class="calendar-grid week-mode" id="week-grid"></div>
+            </div>
+
+            <div class="mood-card-purple">
+                <div class="mood-card-header">
+                    <span id="selected-date-title">2026/09/28 的情緒紀錄</span>
+                    <span id="diary-record-time">13:00</span>
+                </div>
+                <div class="mood-display">
+                    <span class="emoji" id="diary-mood-emoji">😊</span>
+                    <span class="mood-text" id="diary-mood-text">平靜放鬆</span>
+                </div>
+                <div class="mood-report-wrap">
+                    <button type="button" class="mood-report-btn" id="btn-open-daily-report">查看當日檢測報表</button>
+                </div>
+            </div>
+
+            <!-- AI 諮詢與對話紀錄 -->
+            <div class="ai-chat-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 12px; font-weight: 800; color: var(--text-muted);">AI 療癒諮詢對話</span>
+                    <button type="button" class="btn-clear-chat" id="btn-clear-chat">清空對話</button>
+                </div>
+                
+                <div class="chat-container" id="chat-container"></div>
+
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="對 AI 說說你的想法..." />
+                    <button type="button" class="btn-send" id="btn-chat-send">傳送</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部狀態提示 -->
+        <div id="status-bar">系統狀態：機器手臂待命</div>
+
+        <!-- 底部導覽列 -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-target="page-main">情緒定位</div>
+            <div class="nav-item" data-target="page-bio">生理狀態</div>
+            <div class="nav-item" data-target="page-diary">情緒日記</div>
+        </div>
+
+        <!-- 1. 機器手臂控制彈窗 -->
+        <div class="robot-overlay" id="robot-overlay">
+            <div class="robot-modal">
+                <div class="robot-header">
+                    <div>
+                        <div class="robot-kicker">ROBOT ARM CONTROL</div>
+                        <div class="robot-title">頌缽療程控制</div>
+                    </div>
+                    <button type="button" class="robot-close" id="btn-close-robot">✕</button>
+                </div>
+                <div class="robot-main">
+                    <div class="robot-status-line">
+                        <div class="robot-dot"></div>
+                        <span id="robot-status-text">手臂狀態：已連線待命</span>
+                    </div>
+                    <div class="robot-detail" id="robot-detail">系統會參考今天的情緒日記，推薦頌缽療程。</div>
+                </div>
+
+                <div class="treatment-time-options">
+                    <button type="button" class="time-option active" data-time="5">5分鐘</button>
+                    <button type="button" class="time-option" data-time="10">10分鐘</button>
+                    <button type="button" class="time-option" data-time="15">15分鐘</button>
+                </div>
+
+                <div class="robot-actions-group">
+                    <button type="button" class="treatment-confirm-btn" id="btn-start-treatment">開始執行頌缽音療</button>
+                    <button type="button" class="btn-stop-treatment" id="btn-stop-treatment" style="display: none;">緊急停止音療</button>
+                    <button type="button" class="robot-report-btn" id="btn-open-robot-report">檢視療程分析報表</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 心情報表彈窗 -->
+        <div class="daily-report-overlay" id="daily-report-overlay">
+            <div class="daily-report-modal">
+                <div class="daily-report-header">
+                    <div>
+                        <div class="daily-report-kicker">DAILY MOOD REPORT</div>
+                        <div class="daily-report-title" id="report-modal-date">每日情緒報表</div>
+                    </div>
+                    <button type="button" class="daily-report-close" id="btn-close-daily-report">✕</button>
+                </div>
+                <div class="daily-report-main">
+                    <div class="daily-report-emoji" id="report-modal-emoji">😊</div>
+                    <div>
+                        <div class="daily-report-mood" id="report-modal-mood">平靜放鬆</div>
+                        <div class="daily-report-level">身心能量：良好</div>
+                    </div>
+                </div>
+                <div class="daily-report-section">
+                    <div class="daily-report-label">AI 分析與建議</div>
+                    <div class="daily-report-text" id="report-modal-text">整體身心狀態穩定，建議進行 10 分鐘 432Hz 頌缽療程以鞏固沉靜感。</div>
+                </div>
+                <button type="button" class="daily-report-done" id="btn-done-daily-report">關閉報表</button>
+            </div>
+        </div>
+
+        <!-- 3. 頌缽療程報表彈窗 -->
+        <div class="robot-report-overlay" id="robot-report-overlay">
+            <div class="robot-report-modal">
+                <div class="robot-report-header">
+                    <div>
+                        <div class="robot-report-kicker">TREATMENT REPORT</div>
+                        <div class="robot-report-title">頌缽療程結果</div>
+                    </div>
+                    <button type="button" class="robot-report-close" id="btn-close-robot-report">✕</button>
+                </div>
+                <div class="robot-metrics">
+                    <div class="robot-metric">
+                        <div class="robot-metric-label">療程時間</div>
+                        <div class="robot-metric-value" id="report-total-time">5 分鐘</div>
+                    </div>
+                    <div class="robot-metric">
+                        <div class="robot-metric-label">共振頻率</div>
+                        <div class="robot-metric-value" id="report-freq">432 Hz</div>
+                    </div>
+                </div>
+                <div class="robot-report-section">
+                    <div class="robot-report-label">療程建議與成效</div>
+                    <div class="robot-report-text" id="robot-report-text">療程會依今日情緒日記推薦，並以 432Hz 執行。</div>
+                </div>
+                <button type="button" class="daily-report-done" id="btn-done-robot-report">確定</button>
+            </div>
+        </div>
+
+        <!-- 自殺／自傷風險安全提醒彈窗 -->
+        <div
+            class="crisis-overlay"
+            id="crisis-overlay"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="crisis-title"
+            aria-describedby="crisis-message"
+        >
+            <div class="crisis-modal">
+                <div class="crisis-header">
+                    <div class="crisis-icon" aria-hidden="true">!</div>
+                    <div>
+                        <div class="crisis-kicker">SAFETY SUPPORT</div>
+                        <div class="crisis-title" id="crisis-title">先確認你現在的安全</div>
+                    </div>
+                    <button
+                        type="button"
+                        class="crisis-close"
+                        id="btn-close-crisis"
+                        aria-label="關閉"
+                    >✕</button>
+                </div>
+
+                <div class="crisis-message" id="crisis-message">
+                    我很在意你現在的安全。請先到有其他人在的地方，並聯絡一位你信任的人陪著你。
+                </div>
+
+                <div class="crisis-status" id="crisis-report-status">
+                    若你或他人正處於立即危險，請撥打 119；安心專線 1925 提供 24 小時支持。
+                </div>
+
+                <div class="crisis-actions">
+                    <a class="crisis-call crisis-call-emergency" href="tel:119">立即撥打 119</a>
+                    <a class="crisis-call crisis-call-support" href="tel:1925">安心專線 1925</a>
+                </div>
+
+                <button type="button" class="crisis-done" id="btn-done-crisis">
+                    我知道了
+                </button>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

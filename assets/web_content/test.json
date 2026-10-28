@@ -1,0 +1,130 @@
+{
+  "diary_id": "diary_20261025_u8801",
+  "user_id": "u8801",
+  "date": "2026-10-25",
+  "created_at": "2026-10-25T08:00:00Z",
+  "updated_at": "2026-10-25T22:30:00Z",
+
+  "daily_chat_records": [
+    {
+      "timestamp": "2026-10-25T20:30:00Z",
+      "role": "user",
+      "message": "今天下午開會被主管否定方案，心跳一直好快，到現在還是覺得很焦慮很悶..."
+    },
+    {
+      "timestamp": "2026-10-25T20:30:05Z",
+      "role": "model",
+      "message": "辛苦了，開會被否定確實會讓人感到挫折且神經緊繃。我們先做一次放鬆，把呼吸調慢好嗎？"
+    }
+  ],
+  "daily_summary": {
+    "overview": "職場挫折引發之急性高焦慮與高自律神經喚醒狀態。",
+    "tags": ["職場壓力", "焦慮", "自律神經緊繃"],
+    "overall_six_emotions": {
+      "joy": 0.0,
+      "sadness": 0.45,
+      "fear": 0.70,
+      "anger": 0.20,
+      "surprise": 0.0,
+      "disgust": 0.10
+    }
+  },
+
+  "therapy_sessions": [
+    {
+      "session_id": "sess_20261025_01",
+      "session_order": 1,
+      "start_time": "2026-10-25T20:35:00Z",
+      "end_time": "2026-10-25T20:50:00Z",
+      "duration_sec": 900,
+      "completion_status": "COMPLETED",
+
+  
+      "pre_state": {
+        "user_input_affect": {
+          "valence": -0.65,
+          "arousal": 0.80,
+          "primary_emotion": "ANXIOUS"
+        },
+        "bsrs_score": 12,
+        "baseline_physiology": {
+          "heart_rate_bpm": 92,
+          "hrv_rmssd_ms": 24.3,
+          "tinyml_relaxation_score": 32
+        }
+      },
+
+
+      "prescription": {
+        "mode_code": "DEEP_RELAX",
+        "target_duration_sec": 900,
+        "decision_rationale": "高喚醒負向情緒且生理放鬆指數偏低 (32)，下發深度舒緩模式以低頻長間隔帶動呼吸放慢。",
+        "initial_base_params": {
+          "strike_force_percent": 40,
+          "interval_ms": 3500,
+          "technique": "STRIKE"
+        },
+        "guidance_text": "閉上眼睛，深深吸氣...將注意力放在每一次低沉的缽聲震動中。"
+      },
+
+  
+      "execution_telemetry": {
+        "sampling_interval_sec": 30,
+        "timeline": [
+          {
+            "elapsed_sec": 30,
+            "hr": 90,
+            "rmssd": 25.1,
+            "tinyml_relaxation_score": 35,
+            "micro_adjustment": {
+              "action": "DECREASE_INTENSITY_AND_SLOW_DOWN",
+              "adjusted_force_percent": 35,
+              "adjusted_interval_ms": 3800
+            }
+          },
+          {
+            "elapsed_sec": 300,
+            "hr": 82,
+            "rmssd": 34.0,
+            "tinyml_relaxation_score": 58,
+            "micro_adjustment": {
+              "action": "HOLD_RESONANCE",
+              "adjusted_force_percent": 35,
+              "adjusted_interval_ms": 3800
+            }
+          },
+          {
+            "elapsed_sec": 600,
+            "hr": 74,
+            "rmssd": 42.5,
+            "tinyml_relaxation_score": 75,
+            "micro_adjustment": {
+              "action": "OPTIMIZE_FREQUENCY",
+              "adjusted_force_percent": 30,
+              "adjusted_interval_ms": 4000
+            }
+          }
+        ]
+      },
+
+      
+      "post_state": {
+        "final_physiology": {
+          "heart_rate_bpm": 71,
+          "hrv_rmssd_ms": 46.8,
+          "tinyml_relaxation_score": 82
+        },
+        "physiological_delta": {
+          "hr_change": -21,
+          "rmssd_growth": 22.5,
+          "relaxation_score_gain": 50
+        },
+        "user_subjective_feedback": {
+          "satisfaction_rating": 5,
+          "user_note": "到中後段心跳明顯慢下來，敲擊力道放輕很舒服。"
+        },
+        "session_effectiveness": "HIGHLY_EFFECTIVE"
+      }
+    }
+  ]
+}

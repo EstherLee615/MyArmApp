@@ -1,0 +1,32 @@
+{
+  "diary_id": "diary_20260902_u8801",
+  "user_id": "u8801",
+  "date": "2026-09-02",
+  "created_at": "2026-09-02T07:44:02.571946Z",
+  "updated_at": "2026-09-02T07:44:02.572359Z",
+  "daily_chat_records": [
+    {
+      "timestamp": "2026-09-02T07:44:02.555Z",
+      "role": "user",
+      "message": "今天很放鬆"
+    }
+  ],
+  "daily_summary": {
+    "overview": "",
+    "tags": [],
+    "overall_six_emotions": {
+      "joy": 0,
+      "sadness": 0,
+      "fear": 0,
+      "anger": 0,
+      "surprise": 0,
+      "disgust": 0
+    },
+    "safety_alert": {
+      "is_crisis": false,
+      "risk_level": "NONE",
+      "matched_keywords": []
+    }
+  },
+  "therapy_sessions": []
+}

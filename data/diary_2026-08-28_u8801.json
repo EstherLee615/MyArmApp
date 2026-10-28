@@ -1,0 +1,32 @@
+{
+  "diary_id": "diary_20260828_u8801",
+  "user_id": "u8801",
+  "date": "2026-08-28",
+  "created_at": "2026-08-28T08:09:49.039626Z",
+  "updated_at": "2026-08-28T08:09:49.040190Z",
+  "daily_chat_records": [
+    {
+      "timestamp": "2026-08-28T08:09:49.020Z",
+      "role": "user",
+      "message": "我想睡覺"
+    }
+  ],
+  "daily_summary": {
+    "overview": "",
+    "tags": [],
+    "overall_six_emotions": {
+      "joy": 0,
+      "sadness": 0,
+      "fear": 0,
+      "anger": 0,
+      "surprise": 0,
+      "disgust": 0
+    },
+    "safety_alert": {
+      "is_crisis": false,
+      "risk_level": "NONE",
+      "matched_keywords": []
+    }
+  },
+  "therapy_sessions": []
+}
