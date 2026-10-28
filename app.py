@@ -193,4 +193,5 @@ def generate_relax_voice():
 
 if __name__ == "__main__":
     print("🚀 伺服器啟動中，監聽 http://127.0.0.1:5000")
+>>>>>>> f14e2e496951b65e066ba14f0406e25cb70ba3f4
     app.run(host="127.0.0.1", port=5000, debug=True)
